@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">firebase</string>
+    <string name="Log_in">Log in to FB</string>
+    <string name="Log_out">Log out from FB</string>
+</resources>
