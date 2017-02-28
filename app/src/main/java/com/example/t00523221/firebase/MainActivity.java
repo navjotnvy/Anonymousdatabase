@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,20 +22,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.R.attr.value;
-import static com.example.t00523221.firebase.R.id.clear_all;
-
-
-
 
 /* for anonymous token authentication*/
 // In database on browser. Go To Authentication --> Signed In methods --> Anonymous --> Enable --> Save
@@ -72,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
                     // Write a message to the database
                     database = FirebaseDatabase.getInstance();
                     myRef = database.getReference("RootElement");
-
                     // Read from the database
                     myRef.addValueEventListener(new ValueEventListener() {
                         @Override
@@ -81,22 +70,18 @@ public class MainActivity extends AppCompatActivity {
                             // whenever data at this location is updated.
                             //String value = dataSnapshot.getValue(String.class);
                             //Log.d(TAG, "Value is: " + value);
-
                             ArrayList<String> Userlist = new ArrayList<String>();
-
-
                             // Result will be holded Here
-                            for (DataSnapshot dsp : dataSnapshot.getChildren()) {
+                         /*   for (DataSnapshot dsp : dataSnapshot.getChildren()) {
                                 String std_id = dsp.child("student_id").getValue().toString();
                                 String std_name = dsp.child("student_name").getValue().toString();
 
                                 Userlist.add(" === " + std_id + " || " + std_name + " === "); //add result into array list
-                            }
+                            }*/
                             Log.d("TAG", "-***-" + String.valueOf(Userlist));
 
                             ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,
                                     android.R.layout.simple_list_item_1, android.R.id.text1, Userlist);
-
                             listview.setAdapter(adapter);
                         }
 
@@ -116,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     Log.d(TAG, "signInAnonymously:onComplete:" + task.isSuccessful());
-
                                     // If sign in fails, display a message to the user. If sign in succeeds
                                     // the auth state listener will be notified and logic to handle the
                                     // signed in user can be handled in the listener.
@@ -125,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
                                         Toast.makeText(MainActivity.this, "Authentication failed.",
                                                 Toast.LENGTH_SHORT).show();
                                     }
-
                                     // ...
                                 }
                             });
@@ -153,16 +136,16 @@ public class MainActivity extends AppCompatActivity {
 
                 if (stdname_value.getText().toString().isEmpty()) myvalue = "Default";
                 else myvalue = stdname_value.getText().toString();
-
-                //myRef.setValue(myvalue); only root element
-                //myRef.push().setValue(myvalue); // Random key value genetrated
-                //myRef.child(mykey).setValue(myvalue); //key and value pair
-                //myRef.child(mykey).setValue(writeJSON(mykey,myvalue).toString()); //For printing an array list in field. used Json function for it
+// Default is given when there is no input in the box
+                myRef.setValue(myvalue); // deletes all the ids in database, ID with {\"student_id\":\"bn\",\"student_name\":\"234\"} in one line
+                //myRef.push().setValue(myvalue); // Random key value genetrated "key" : Studentname and in new line studentID : with "student_id\":\"T00\",\"student_name\":\"Hello\"
+                //myRef.child(mykey).setValue(myvalue); //key the one already generated and value pair \"student_id\":\"T00\",\"student_name\":\"Hello\"
+                myRef.child(mykey).setValue(writeJSON(mykey,myvalue).toString()); //For printing an array list in field. used Json function for it
                 JSONObject studentRecord = writeJSON(mykey,myvalue); //Json next functionJSONObject studentRecord = writeJSON(mykey,myvalue);
                 Map<String, Object> classList= new Gson().fromJson(studentRecord.toString(), new TypeToken<HashMap<String, Object>>(){}.getType());
                 //add Gson lib in project structure to do so. from the project structure button-> app -> dependencies -> + -> search 'Gson' without quotes and add 'com.google.code.gson:gson:2.8.0'
-                myRef.push().setValue(classList);// random key generated when adding, then key value pair is generated
-                //myRef.child("record_0").setValue(classList);// record_0 is instead of random key
+                //myRef.push().setValue(classList);// random key generated when adding, then key value pair is generated then this(value in database is {\"student_id\":\"T00\",\"student_name\":\"Hello\"}")
+                //myRef.child("record_0").setValue(classList);// record_0 is added student_id and student_name is given under it but it just keeps updating itself.
                 //it doesn't make any difference if there is any random key or not to read the records back
             }
         });
